@@ -77,6 +77,7 @@ export class AppComponent implements AfterViewInit {
       this.objects$.subscribe(tasks => {
          this.tasks = tasks;
          this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
+         let changed = false;
          for (let task of this.tomorrowTasks) {
             let taskDate = task.createdDate.toDate();
             let diff = today.valueOf() - taskDate.valueOf();
@@ -84,10 +85,15 @@ export class AppComponent implements AfterViewInit {
             console.log(taskDate);
             let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
             console.log(diffDays);
-            task.createdDate = today;
-            task.column = "Today";
+            if (diffDays > 0) {
+               task.createdDate = today;
+               task.column = "Today";
+               changed = true;
+            }
          }
-         this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
+         if (changed) {
+            this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
+         }
          this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
       });
@@ -96,6 +102,14 @@ export class AppComponent implements AfterViewInit {
    selectTask(taskId: string) {
       this.newTask = this.tasks.find(x => x.id == taskId);
       this.openModal('taskModal');
+   }
+
+   createNewTask() {
+      this.newTask.createdDate = new Date();
+      this.newTask.userId = this.userId;
+      this.tasks.push(this.newTask);
+      this.newTask = new Task();
+      this.closeModal('taskModal');
    }
 
    async saveToDatabase() {
