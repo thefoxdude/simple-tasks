@@ -73,10 +73,22 @@ export class AppComponent implements AfterViewInit {
    getTasks() {
       this.collection = this.db.collection("tasks", tasks => tasks.where('userID', '==', this.userId));
       this.objects$ = this.collection.valueChanges();
+      let today = new Date();
       this.objects$.subscribe(tasks => {
          this.tasks = tasks;
-         this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
+         for (let task of this.tomorrowTasks) {
+            let taskDate = task.createdDate.toDate();
+            let diff = today.valueOf() - taskDate.valueOf();
+            console.log(today);
+            console.log(taskDate);
+            let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
+            console.log(diffDays);
+            task.createdDate = today;
+            task.column = "Today";
+         }
+         this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
+         this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
       });
    }

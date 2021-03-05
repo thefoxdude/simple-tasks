@@ -1,6 +1,6 @@
 export class Task {
    taskName: string;
-   createdDate: Date;
+   createdDate: any;
    completed: boolean = false;
    column: string;
    userId: string;
