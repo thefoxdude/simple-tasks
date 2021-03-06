@@ -76,9 +76,7 @@ export class AppComponent implements AfterViewInit {
       let today = new Date();
       this.objects$.subscribe(tasks => {
          this.tasks = tasks;
-         this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
-         let changed = false;
-         for (let task of this.tomorrowTasks) {
+         for (let task of this.tasks) {
             let taskDate = task.createdDate.toDate();
             let diff = today.valueOf() - taskDate.valueOf();
             console.log(today);
@@ -86,14 +84,23 @@ export class AppComponent implements AfterViewInit {
             let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
             console.log(diffDays);
             if (diffDays > 0) {
-               task.createdDate = today;
-               task.column = "Today";
-               changed = true;
+               if (task.column == "Tomorrow") {
+                  task.createdDate = today;
+                  task.column = "Today";
+               } else if (task.column == "Today") {
+                  console.log('Here: ' + task.taskName);
+                  task.bgColor = 'yellow';
+                  task.color = 'black';
+                  if (diffDays > 1) {
+                     task.bgColor = 'red';
+                     task.color = 'white';
+                  }
+               } else if (task.column = "This Week") {
+
+               }
             }
          }
-         if (changed) {
-            this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
-         }
+         this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
          this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
       });

@@ -6,6 +6,8 @@ export class Task {
    userId: string;
    details: string;
    id: string;
+   bgColor: string = "white";
+   color: string = "black";
 }
 
 export enum Columns {
