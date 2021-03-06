@@ -8,21 +8,22 @@
    scroll-snap-points-x: repeat(100%);
    scroll-snap-type: x mandatory;
    -webkit-overflow-scrolling: touch;
+   background-color: #2B4D59;
+   color: white;
 }
 
 section {
-   height: 80vh;
-   scroll-snap-align: start;
+   height: 100vh;
+   scroll-snap-align: center;
 }
 
-.today {
-   
+.task-card {
+   margin-bottom: 2px;
+   background-color: #F0EAF4;
+   color: black;
 }
 
-.tomorrow {
-   
-}
-
-.thisWeek {
-   
+.fox-green {
+   background-color: #39998E;
+   color: white;
 }

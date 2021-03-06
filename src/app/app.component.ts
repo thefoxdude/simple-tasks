@@ -73,42 +73,46 @@ export class AppComponent implements AfterViewInit {
    getTasks() {
       this.collection = this.db.collection("tasks", tasks => tasks.where('userID', '==', this.userId));
       this.objects$ = this.collection.valueChanges();
-      let today = new Date();
+      
       this.objects$.subscribe(tasks => {
          this.tasks = tasks;
-         for (let task of this.tasks) {
-            let taskDate = task.createdDate.toDate();
-            let diff = today.valueOf() - taskDate.valueOf();
-            console.log(today);
-            console.log(taskDate);
-            let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
-            console.log(diffDays);
-            if (diffDays > 0) {
-               if (task.column == "Tomorrow") {
-                  task.createdDate = today;
-                  task.column = "Today";
-               } else if (task.column == "Today") {
-                  console.log('Here: ' + task.taskName);
-                  task.bgColor = 'yellow';
-                  task.color = 'black';
-                  if (diffDays > 1) {
-                     task.bgColor = 'red';
-                     task.color = 'white';
-                  }
-               } else if (task.column = "This Week") {
-
-               }
-            }
-         }
+         this.updateTasks();
          this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
          this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
       });
    }
 
+   updateTasks() {
+      let today = new Date();
+      for (let task of this.tasks) {
+         let taskDate = task.createdDate.toDate();
+         let diff = today.valueOf() - taskDate.valueOf();
+         let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
+         console.log(diffDays);
+         console.log(task.taskName + ' ' + task.column);
+         if (diffDays > 0) {
+            if (task.column == "Tomorrow") {
+               task.createdDate = today;
+               task.column = "Today";
+            } else if (task.column == "Today") {
+               console.log('Here: ' + task.taskName);
+               task.bgColor = '#FFDC7C';
+               task.color = 'black';
+               if (diffDays > 1) {
+                  task.bgColor = '#DA674A';
+                  task.color = 'white';
+               }
+            } else if (task.column = "This Week") {
+
+            }
+         }
+      }
+   }
+
    selectTask(taskId: string) {
       this.newTask = this.tasks.find(x => x.id == taskId);
-      this.openModal('taskModal');
+      this.openModal('taskModal', '');
    }
 
    createNewTask() {
@@ -146,8 +150,12 @@ export class AppComponent implements AfterViewInit {
       event.stopPropagation();
    }
 
-   openModal(modalName: string) {
+   openModal(modalName: string, column: string) {
+      if (modalName == "taskModal" && this.newTask.id == null) {
+         this.newTask.column = column;
+      }
       (<HTMLElement> document.getElementById(modalName)).style.display = 'block';
+      
    }
 
    closeModal(modalName: string) {
