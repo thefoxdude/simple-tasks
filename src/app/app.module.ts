@@ -1,5 +1,6 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, Injectable } from '@angular/core';
+import * as Hammer from 'hammerjs';
+import { BrowserModule, HammerModule, HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 
@@ -11,6 +12,13 @@ import { environment } from "src/environments/environment";
 import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from './services/AuthenticationService.service';
 
+@Injectable() 
+export class MyHammerConfig extends HammerGestureConfig { 
+  overrides = <any> { 
+    swipe: { direction: Hammer.DIRECTION_RIGHT }, 
+  }; 
+} 
+
 @NgModule({
    declarations: [
       AppComponent
@@ -20,10 +28,15 @@ import { AuthenticationService } from './services/AuthenticationService.service'
       AngularFireModule.initializeApp(environment.firebaseConfig),
       AngularFirestoreModule,
       FormsModule,
-      AngularFireAuthModule
+      AngularFireAuthModule,
+      HammerModule
    ],
    providers: [
-      AuthenticationService
+      AuthenticationService,
+      {
+         provide: HAMMER_GESTURE_CONFIG,
+         useClass: MyHammerConfig
+      }
    ],
    bootstrap: [AppComponent]
 })

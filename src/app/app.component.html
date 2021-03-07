@@ -28,6 +28,9 @@
       [style.background-color]="task.bgColor" [style.color]="task.color">
          <h4>{{ task.taskName }}</h4>
       </div>
+      <div class="w3-card w3-padding w3-hover-shadow task-card" (swipe)="onSwipe($event)">
+         <h4>{{ task.taskName }}</h4>
+      </div>
    </section>
    <section class="tomorrow w3-container">
       <div class="w3-center w3-display-container w3-margin-bottom">
