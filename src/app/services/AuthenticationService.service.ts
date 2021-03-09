@@ -53,7 +53,7 @@ export class AuthenticationService {
             console.log('You are Successfully logged in!');
             console.log();
             this.angularFireAuth.currentUser.then(user => {
-               console.log(user.uid);
+               // console.log(user.uid);
                resolve(user.uid);
             });
          })

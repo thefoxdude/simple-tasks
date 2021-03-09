@@ -28,8 +28,14 @@
       [style.background-color]="task.bgColor" [style.color]="task.color">
          <h4>{{ task.taskName }}</h4>
       </div>
-      <div class="w3-card w3-padding w3-hover-shadow task-card" (swipe)="onSwipe($event)">
-         <h4>{{ task.taskName }}</h4>
+      <div class="w3-card w3-hover-shadow task-card w3-row" (touchstart)="handleTouchStart($event)" (touchmove)="handleTouchMove($event)" (touchend)="handleTouchEnd($event)" >
+         <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
+            <i class="fa fa-check w3-left fox-check fox-green" aria-hidden="true"></i>
+         </div>
+         
+         <div class="w3-container w3-border draggable-card w3-rest">
+            <h4>Test</h4>
+         </div>
       </div>
    </section>
    <section class="tomorrow w3-container">
@@ -60,24 +66,25 @@
       <form class="w3-container">
          <div>
             <label for="title">Title:</label>
-            <input type="text" [(ngModel)]="newTask.taskName" id="title" name="title" placeholder="Task Name">
+            <input type="text" [(ngModel)]="currentTask.taskName" id="title" name="title" placeholder="Task Name">
          </div>
          <div>
             <label for="column">Column:</label>
-            <select [(ngModel)]="newTask.column" id="column" name="column">
+            <select [(ngModel)]="currentTask.column" id="column" name="column">
                <option></option>
                <option *ngFor="let column of columns | keyvalue" [ngValue]="column.value">{{ column.value }}</option>
             </select>
          </div>
          <div>
             <label for="details">Details:</label>
-            <textarea type="textarea" [(ngModel)]="newTask.details" id="details" placeholder="Task Details" name="details"></textarea>
+            <textarea type="textarea" [(ngModel)]="currentTask.details" id="details" placeholder="Task Details" name="details"></textarea>
          </div>
          <div>
-            <input type="checkbox" [(ngModel)]="newTask.completed" id="completed" name="completed">
+            <input type="checkbox" [(ngModel)]="currentTask.completed" id="completed" name="completed">
             <label for="completed">Completed:</label>
          </div>
-         <button (click)="saveToDatabase()">Save</button>
+         <button (click)="saveToDatabase()" *ngIf="currentTask.id == null">Save 1</button>
+         <button (click)="updateTask(task)" *ngIf="currentTask.id != null">Save 2</button>
       </form>
    </div>
 </div>

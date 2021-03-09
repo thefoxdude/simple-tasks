@@ -19,11 +19,33 @@ section {
 
 .task-card {
    margin-bottom: 2px;
-   background-color: #F0EAF4;
+   background-color: #e4e1d8;
    color: black;
+   width: 100%;
+   overflow-x: hidden;
 }
 
 .fox-green {
    background-color: #39998E;
    color: white;
+}
+
+.draggable-card {
+   position: relative;
+}
+
+.fox-check-container {
+   display: block;
+   display: none;
+}
+
+.fox-check {
+   font-size: 2em;
+   background-color: green;
+   border-radius: 50%;
+   color: white;
+   position: relative;
+   top: 10px;
+   right: 5px;
+   
 }

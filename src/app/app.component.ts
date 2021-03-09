@@ -3,6 +3,8 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { Task, Columns } from './objects/task';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from './services/AuthenticationService.service';
+declare var $: any;
+import * as clone from 'clone';
 
 
 @Component({
@@ -10,7 +12,7 @@ import { AuthenticationService } from './services/AuthenticationService.service'
    templateUrl: './app.component.html',
    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
    title = 'simple-task';
    tasks: Task[];
    collection: AngularFirestoreCollection<Task>;
@@ -18,28 +20,31 @@ export class AppComponent implements AfterViewInit {
    email: string;
    password: string;
    userId: string;
-   newTask: Task;
+   currentTask: Task;
    columns = Columns;
    todayTasks: Task[];
    tomorrowTasks: Task[];
    thisWeekTasks: Task[];
+   direction = "";
+   originalTask: Task;
+   xDown = null;
+   yDown = null;
+   
 
    constructor(private db: AngularFirestore, private authenticationService: AuthenticationService) {
-      this.newTask = new Task();
+      this.currentTask = new Task();
       if (this.authenticationService.isLoggedIn()) {
          let user = JSON.parse(localStorage.getItem('user'));
-         console.log(user);
+         // console.log(user);
          this.userId = user.uid;
          this.getTasks();
       } else {
          this.userId = null;
       }
-      // this.authenticationService.SignIn(this.email, this.password).then(userId => {
-      //    this.userId = <string> userId;
-      //    this.getTasks();
-      // }, error => {
-      //    console.log("We didn't make it: ", error);
-      // });
+   }
+
+   ngOnInit() {
+      // $(".draggable-cards").draggable({containment: "parent"});
    }
 
    ngAfterViewInit() {
@@ -72,14 +77,20 @@ export class AppComponent implements AfterViewInit {
 
    getTasks() {
       this.collection = this.db.collection("tasks", tasks => tasks.where('userID', '==', this.userId));
-      this.objects$ = this.collection.valueChanges();
+      this.objects$ = this.collection.valueChanges({idField: 'id'});
       
       this.objects$.subscribe(tasks => {
+         // console.log(tasks);
          this.tasks = tasks;
          this.updateTasks();
          this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
          this.todayTasks = tasks.filter(x => x.column == Columns.Today);
          this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
+         let cards = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName('draggable-cards');
+         
+         for (let i = 0; i < cards.length; i++) {
+            // cards[i].draggable({containment: "parent"});
+         }
       });
    }
 
@@ -89,14 +100,14 @@ export class AppComponent implements AfterViewInit {
          let taskDate = task.createdDate.toDate();
          let diff = today.valueOf() - taskDate.valueOf();
          let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
-         console.log(diffDays);
-         console.log(task.taskName + ' ' + task.column);
+         // console.log(diffDays);
+         // console.log(task.taskName + ' ' + task.column);
          if (diffDays > 0) {
             if (task.column == "Tomorrow") {
                task.createdDate = today;
                task.column = "Today";
             } else if (task.column == "Today") {
-               console.log('Here: ' + task.taskName);
+               // console.log('Here: ' + task.taskName);
                task.bgColor = '#FFDC7C';
                task.color = 'black';
                if (diffDays > 1) {
@@ -111,61 +122,122 @@ export class AppComponent implements AfterViewInit {
    }
 
    selectTask(taskId: string) {
-      this.newTask = this.tasks.find(x => x.id == taskId);
+      console.log(taskId);
+      this.currentTask = this.tasks.find(x => x.id == taskId);
+      this.originalTask = clone<Task>(this.currentTask);
+      console.log(this.currentTask);
       this.openModal('taskModal', '');
    }
 
-   createNewTask() {
-      this.newTask.createdDate = new Date();
-      this.newTask.userId = this.userId;
-      this.tasks.push(this.newTask);
-      this.newTask = new Task();
+   createcurrentTask() {
+      this.currentTask.createdDate = new Date();
+      this.currentTask.userId = this.userId;
+      this.tasks.push(this.currentTask);
+      this.currentTask = new Task();
       this.closeModal('taskModal');
    }
 
    async saveToDatabase() {
-      console.log(this.newTask);
+      console.log(this.currentTask);
       if (this.userId) {
-         this.newTask.createdDate = new Date();
-         this.newTask.userId = this.userId;
-         
-         let result = await this.db.collection('tasks').add({
-            taskName: this.newTask.taskName,
-            createdDate: this.newTask.createdDate,
-            details: this.newTask.details,
-            userID: this.newTask.userId,
-            completed: this.newTask.completed,
-            column: this.newTask.column
-         });
-         console.log('Added document with ID: ', result.id);
-         this.newTask = new Task();
-         this.closeModal('taskModal');
+         if (this.currentTask.id == null) {
+            this.currentTask.createdDate = new Date();
+            this.currentTask.userId = this.userId;
+            
+            let result = await this.db.collection('tasks').add({
+               taskName: this.currentTask.taskName,
+               createdDate: this.currentTask.createdDate,
+               details: this.currentTask.details,
+               userID: this.currentTask.userId,
+               completed: this.currentTask.completed,
+               column: this.currentTask.column
+            });
+            console.log('Added document with ID: ', result.id);
+            this.currentTask = new Task();
+            this.closeModal('taskModal');
+         } else {
+            console.log("updated");
+            this.updateTask(this.currentTask);
+         }
       } else {
          console.log('You are not logged in');
       }
       
    }
 
+   async updateTask(task: Task) {
+      let today = new Date();
+      if (task.column != this.originalTask.column) {
+         task.updatedDate = today;
+      }
+      this.db.collection('tasks').doc(task.id).set({
+         taskName: task.taskName,
+         details: task.details,
+         updatedDate: task.updatedDate,
+         completed: task.completed,
+         column: task.column
+      }, {merge: true})
+   }
+
    stopBubble(event: Event) {
       event.stopPropagation();
    }
 
-   onSwipe(event: Event) {
-      const x = Math.abs(event.deltaX) > 40 ? (event.deltaX > 0 ? "Right" : "Left") : ""; 
-      const y = Math.abs(event.deltaY) > 40 ? (event.deltaY > 0 ? "Down" : "Up") : ""; 
-      this.direction += `You swiped in <b> ${x} ${y} </b> direction <hr>`;
-   }
-
    openModal(modalName: string, column: string) {
-      if (modalName == "taskModal" && this.newTask.id == null) {
-         this.newTask.column = column;
+      if (modalName == "taskModal" && this.currentTask.id == null) {
+         this.currentTask.column = column;
       }
       (<HTMLElement> document.getElementById(modalName)).style.display = 'block';
       
    }
 
    closeModal(modalName: string) {
-      this.newTask = new Task();
+      if (modalName == 'taskModal') {
+
+      }
+      this.currentTask = new Task();
       (<HTMLElement> document.getElementById(modalName)).style.display = 'none';
+   }
+
+   getTouches(evt) {
+      return evt.touches ||             // browser API
+             evt.originalEvent.touches; // jQuery
+   } 
+
+   handleTouchStart(evt) {
+      const firstTouch = this.getTouches(evt)[0];                                      
+      this.xDown = firstTouch.clientX;                                      
+      this.yDown = firstTouch.clientY;                                      
+   };                                                
+  
+   handleTouchMove(evt) {
+      this.stopBubble(evt);
+  
+      let xUp = evt.touches[0].clientX;                                    
+      let yUp = evt.touches[0].clientY;
+  
+      let xDiff = this.xDown - xUp;
+      let yDiff = this.yDown - yUp;
+  
+      if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+         if ( xDiff < 0 ) {
+            /* right swipe */
+            evt.target.parentNode.style.right = xDiff + 'px';
+            if (xDiff < -10) {
+               console.log(evt.target.parentNode.previousSibling);
+               evt.target.parentNode.previousSibling.style.display = 'block';
+               evt.target.parentNode.previousSibling.style.opacity = -.01 * xDiff;
+               // evt.target.parentNode.parentNode.style.backgroundColor = 'green';
+            }
+         }                       
+      }               
+   };
+
+   handleTouchEnd(evt) {
+      console.log("ended");
+      evt.target.parentNode.style.right = '0px';
+      evt.target.parentNode.previousSibling.style.display = 'none';
+      this.xDown = null;
+      this.yDown = null;
    }
 }

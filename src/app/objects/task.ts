@@ -8,6 +8,8 @@ export class Task {
    id: string;
    bgColor: string = "white";
    color: string = "black";
+   dueDate: any;
+   updatedDate: any;
 }
 
 export enum Columns {
