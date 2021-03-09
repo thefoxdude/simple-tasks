@@ -24,17 +24,13 @@
          <h1>Today</h1>
          <a class="w3-button w3-large w3-circle w3-xlarge w3-ripple fox-green w3-display-topright" (click)="openModal('taskModal', 'Today')">+</a>
       </div>
-      <div class="w3-card w3-padding w3-hover-shadow task-card" *ngFor="let task of todayTasks" (click)="selectTask(task.id)" 
+      <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" (click)="selectTask(task.id)" 
       [style.background-color]="task.bgColor" [style.color]="task.color">
-         <h4>{{ task.taskName }}</h4>
-      </div>
-      <div class="w3-card w3-hover-shadow task-card w3-row" (touchstart)="handleTouchStart($event)" (touchmove)="handleTouchMove($event)" (touchend)="handleTouchEnd($event)" >
          <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
             <i class="fa fa-check w3-left fox-check fox-green" aria-hidden="true"></i>
          </div>
-         
-         <div class="w3-container w3-border draggable-card w3-rest">
-            <h4>Test</h4>
+         <div class="w3-container draggable-card w3-rest">
+            <h4 (touchstart)="handleTouchStart($event)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
          </div>
       </div>
    </section>

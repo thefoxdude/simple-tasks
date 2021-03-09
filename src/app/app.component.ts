@@ -205,39 +205,55 @@ export class AppComponent implements OnInit, AfterViewInit {
    } 
 
    handleTouchStart(evt) {
-      const firstTouch = this.getTouches(evt)[0];                                      
-      this.xDown = firstTouch.clientX;                                      
-      this.yDown = firstTouch.clientY;                                      
-   };                                                
+      const firstTouch = this.getTouches(evt)[0];
+      this.xDown = firstTouch.clientX;
+      this.yDown = firstTouch.clientY;
+   };
   
-   handleTouchMove(evt) {
-      this.stopBubble(evt);
+   handleTouchMove(evt: any, task: Task) {
+      if (task.id != null) {
+         this.stopBubble(evt);
   
-      let xUp = evt.touches[0].clientX;                                    
-      let yUp = evt.touches[0].clientY;
-  
-      let xDiff = this.xDown - xUp;
-      let yDiff = this.yDown - yUp;
-  
-      if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-         if ( xDiff < 0 ) {
-            /* right swipe */
-            evt.target.parentNode.style.right = xDiff + 'px';
-            if (xDiff < -10) {
-               console.log(evt.target.parentNode.previousSibling);
-               evt.target.parentNode.previousSibling.style.display = 'block';
-               evt.target.parentNode.previousSibling.style.opacity = -.01 * xDiff;
-               // evt.target.parentNode.parentNode.style.backgroundColor = 'green';
+         let xUp = evt.touches[0].clientX;
+         let yUp = evt.touches[0].clientY;
+   
+         let xDiff = this.xDown - xUp;
+         let yDiff = this.yDown - yUp;
+         console.log(xDiff);
+         if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+            if ( xDiff < 0 && !task.completed) {
+               /* right swipe */
+               evt.target.parentNode.style.right = xDiff + 'px';
+               if (xDiff < -50) {
+                  evt.target.parentNode.previousSibling.style.display = 'block';
+                  evt.target.parentNode.previousSibling.style.opacity = -.01 * xDiff;
+               }
+               if (xDiff < -100) {
+                  if (!evt.target.parentNode.classList.contains('fox-green')) {
+                     evt.target.parentNode.className += ' fox-green';
+                     task.completed = true;
+                     console.log(task);
+                  }
+               }
+            } else {
+               console.log("left swipe");
             }
-         }                       
-      }               
+         }
+      }
    };
 
-   handleTouchEnd(evt) {
-      console.log("ended");
-      evt.target.parentNode.style.right = '0px';
-      evt.target.parentNode.previousSibling.style.display = 'none';
-      this.xDown = null;
-      this.yDown = null;
+   handleTouchEnd(evt: any, task: Task) {
+      if (task.id != null) {
+         console.log("ended");
+         evt.target.parentNode.style.right = '0px';
+         if (!task.completed) {
+            evt.target.parentNode.previousSibling.style.display = 'none';
+         } else if (task.completed) {
+            task.bgColor = '#39998E';
+            task.color = 'white';
+         }
+         this.xDown = null;
+         this.yDown = null;
+      }
    }
 }
