@@ -24,9 +24,10 @@ Done
 * Create color scheme
 * Figure out hosting
 * Create slide to complete
+* Only show uncompleted (toggle with default being off)
 
 TODO
-* Only show uncompleted
+
 * Update tasks
 * Create slide second time to delete
 * Beautify UI

@@ -23,16 +23,21 @@ export class AppComponent implements OnInit, AfterViewInit {
    currentTask: Task;
    columns = Columns;
    todayTasks: Task[];
+   totalTodayTasks: Task[];
    tomorrowTasks: Task[];
+   totalTomorrowTasks: Task[];
    thisWeekTasks: Task[];
+   totalThisWeekTasks: Task[];
    direction = "";
    originalTask: Task;
    xDown = null;
    yDown = null;
+   showCompleted: boolean;
    
 
    constructor(private db: AngularFirestore, private authenticationService: AuthenticationService) {
       this.currentTask = new Task();
+      this.showCompleted = false;
       if (this.authenticationService.isLoggedIn()) {
          let user = JSON.parse(localStorage.getItem('user'));
          // console.log(user);
@@ -83,9 +88,12 @@ export class AppComponent implements OnInit, AfterViewInit {
          // console.log(tasks);
          this.tasks = tasks;
          this.updateTasks();
-         this.tomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow);
-         this.todayTasks = tasks.filter(x => x.column == Columns.Today);
-         this.thisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek);
+         this.totalTomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow).sort(a => {return a.completed ? 1 : -1});
+         this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
+         this.totalTodayTasks = tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});;
+         this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
+         this.totalThisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});;
+         this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
          let cards = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName('draggable-cards');
          
          for (let i = 0; i < cards.length; i++) {
@@ -98,14 +106,18 @@ export class AppComponent implements OnInit, AfterViewInit {
       let today = new Date();
       for (let task of this.tasks) {
          let taskDate = task.createdDate.toDate();
+         if (task.updatedDate != null) {
+            taskDate = task.updatedDate.toDate();
+         }
          let diff = today.valueOf() - taskDate.valueOf();
          let diffDays = Math.floor(diff / (1000 * 3600 * 24)); 
          // console.log(diffDays);
          // console.log(task.taskName + ' ' + task.column);
          if (diffDays > 0) {
             if (task.column == "Tomorrow") {
-               task.createdDate = today;
                task.column = "Today";
+               task.updatedDate = today;
+               this.updateTask(task);
             } else if (task.column == "Today") {
                // console.log('Here: ' + task.taskName);
                task.bgColor = '#FFDC7C';
@@ -115,8 +127,19 @@ export class AppComponent implements OnInit, AfterViewInit {
                   task.color = 'white';
                }
             } else if (task.column = "This Week") {
-               
+               if (diffDays > 2) {
+                  task.bgColor = '#FFDC7C';
+                  task.color = 'black';
+               }
+               if (diffDays > 5) {
+                  task.bgColor = '#DA674A';
+                  task.color = 'white';
+               }
             }
+         }
+         if (task.completed) {
+            task.bgColor = '#39998E';
+            task.color = 'white';
          }
       }
    }
@@ -167,9 +190,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
    async updateTask(task: Task) {
       let today = new Date();
-      if (task.column != this.originalTask.column) {
-         task.updatedDate = today;
-      }
       this.db.collection('tasks').doc(task.id).set({
          taskName: task.taskName,
          details: task.details,
@@ -252,6 +272,7 @@ export class AppComponent implements OnInit, AfterViewInit {
          } else if (task.completed) {
             task.bgColor = '#39998E';
             task.color = 'white';
+            this.updateTask(task);
          }
          this.xDown = null;
          this.yDown = null;
@@ -264,5 +285,18 @@ export class AppComponent implements OnInit, AfterViewInit {
       task.color = 'black';
       targetCheck.parentNode.style.display = 'none';
       targetCheck.parentNode.nextSibling.classList = 'w3-container draggable-card w3-rest';
+   }
+
+   changeShow() {
+      console.log(this.showCompleted);
+      if (!this.showCompleted) {
+         this.todayTasks = this.totalTodayTasks;
+         this.tomorrowTasks = this.totalTomorrowTasks;
+         this.thisWeekTasks = this.totalThisWeekTasks;
+      } else {
+         this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
+         this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
+         this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
+      }
    }
 }
