@@ -11,6 +11,7 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from "src/environments/environment";
 import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from './services/AuthenticationService.service';
+import { DatabaseService } from './services/DatabaseService.service';
 
 @Injectable() 
 export class MyHammerConfig extends HammerGestureConfig { 
@@ -33,6 +34,7 @@ export class MyHammerConfig extends HammerGestureConfig {
    ],
    providers: [
       AuthenticationService,
+      DatabaseService,
       {
          provide: HAMMER_GESTURE_CONFIG,
          useClass: MyHammerConfig

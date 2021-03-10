@@ -25,12 +25,12 @@ Done
 * Figure out hosting
 * Create slide to complete
 * Only show uncompleted (toggle with default being off)
-
-TODO
-
 * Update tasks
 * Create slide second time to delete
+
+TODO
 * Beautify UI
 * Create desktop UI
 * Create logout
-* Finish "This Week"
+* Finish "This Week" logic
+* Do better sort of tasks

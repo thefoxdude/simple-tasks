@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Task, Columns } from './objects/task';
 import { Observable } from 'rxjs';
 import { AuthenticationService } from './services/AuthenticationService.service';
-declare var $: any;
 import * as clone from 'clone';
+import { DatabaseService } from './services/DatabaseService.service';
 
 
 @Component({
@@ -12,7 +12,7 @@ import * as clone from 'clone';
    templateUrl: './app.component.html',
    styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
    title = 'simple-task';
    tasks: Task[];
    collection: AngularFirestoreCollection<Task>;
@@ -33,9 +33,12 @@ export class AppComponent implements OnInit, AfterViewInit {
    xDown = null;
    yDown = null;
    showCompleted: boolean;
+   touchStartCompleted: boolean;
    
 
-   constructor(private db: AngularFirestore, private authenticationService: AuthenticationService) {
+   constructor(private db: AngularFirestore, 
+               private authenticationService: AuthenticationService,
+               private dbService: DatabaseService) {
       this.currentTask = new Task();
       this.showCompleted = false;
       if (this.authenticationService.isLoggedIn()) {
@@ -46,10 +49,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       } else {
          this.userId = null;
       }
-   }
-
-   ngOnInit() {
-      // $(".draggable-cards").draggable({containment: "parent"});
    }
 
    ngAfterViewInit() {
@@ -81,24 +80,17 @@ export class AppComponent implements OnInit, AfterViewInit {
    }
 
    getTasks() {
-      this.collection = this.db.collection("tasks", tasks => tasks.where('userID', '==', this.userId));
-      this.objects$ = this.collection.valueChanges({idField: 'id'});
-      
+      this.objects$ = this.dbService.getTasks(this.userId);
       this.objects$.subscribe(tasks => {
          // console.log(tasks);
          this.tasks = tasks;
          this.updateTasks();
-         this.totalTomorrowTasks = tasks.filter(x => x.column == Columns.Tomorrow).sort(a => {return a.completed ? 1 : -1});
+         this.totalTomorrowTasks = this.tasks.filter(x => x.column == Columns.Tomorrow).sort(a => {return a.completed ? 1 : -1});
          this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
-         this.totalTodayTasks = tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});;
+         this.totalTodayTasks = this.tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});;
          this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
-         this.totalThisWeekTasks = tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});;
+         this.totalThisWeekTasks = this.tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});;
          this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
-         let cards = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName('draggable-cards');
-         
-         for (let i = 0; i < cards.length; i++) {
-            // cards[i].draggable({containment: "parent"});
-         }
       });
    }
 
@@ -166,16 +158,7 @@ export class AppComponent implements OnInit, AfterViewInit {
          if (this.currentTask.id == null) {
             this.currentTask.createdDate = new Date();
             this.currentTask.userId = this.userId;
-            
-            let result = await this.db.collection('tasks').add({
-               taskName: this.currentTask.taskName,
-               createdDate: this.currentTask.createdDate,
-               details: this.currentTask.details,
-               userID: this.currentTask.userId,
-               completed: this.currentTask.completed,
-               column: this.currentTask.column
-            });
-            console.log('Added document with ID: ', result.id);
+            this.dbService.saveNewTask(this.currentTask);
             this.currentTask = new Task();
             this.closeModal('taskModal');
          } else {
@@ -189,14 +172,19 @@ export class AppComponent implements OnInit, AfterViewInit {
    }
 
    async updateTask(task: Task) {
-      let today = new Date();
-      this.db.collection('tasks').doc(task.id).set({
-         taskName: task.taskName,
-         details: task.details,
-         updatedDate: task.updatedDate,
-         completed: task.completed,
-         column: task.column
-      }, {merge: true})
+      console.log('updated');
+      // this.db.collection('tasks').doc(task.id).set({
+      //    taskName: task.taskName,
+      //    details: task.details,
+      //    updatedDate: task.updatedDate,
+      //    completed: task.completed,
+      //    column: task.column
+      // }, {merge: true});
+   }
+
+   async deleteTask(task: Task) {
+      // this.db.collection('tasks').doc(task.id).delete();
+      console.log("deleted");
    }
 
    stopBubble(event: Event) {
@@ -208,13 +196,9 @@ export class AppComponent implements OnInit, AfterViewInit {
          this.currentTask.column = column;
       }
       (<HTMLElement> document.getElementById(modalName)).style.display = 'block';
-      
    }
 
    closeModal(modalName: string) {
-      if (modalName == 'taskModal') {
-
-      }
       this.currentTask = new Task();
       (<HTMLElement> document.getElementById(modalName)).style.display = 'none';
    }
@@ -224,10 +208,11 @@ export class AppComponent implements OnInit, AfterViewInit {
              evt.originalEvent.touches; // jQuery
    } 
 
-   handleTouchStart(evt) {
+   handleTouchStart(evt: any, task: Task) {
       const firstTouch = this.getTouches(evt)[0];
       this.xDown = firstTouch.clientX;
       this.yDown = firstTouch.clientY;
+      this.touchStartCompleted =  task.completed;
       this.stopBubble(evt);
    };
   
@@ -242,22 +227,33 @@ export class AppComponent implements OnInit, AfterViewInit {
          let yDiff = this.yDown - yUp;
          console.log(xDiff);
          if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-            if ( xDiff < 0 && !task.completed) {
+            if ( xDiff < 0) {
                /* right swipe */
                evt.target.parentNode.style.right = xDiff + 'px';
                if (xDiff < -50) {
+                  if (!task.completed && !evt.target.parentNode.previousSibling.firstChild.classList.contains('fox-check') && !this.touchStartCompleted) {
+                     evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-check w3-left fox-check';
+                  } else if (task.completed && !evt.target.parentNode.previousSibling.firstChild.classList.contains('fox-delete') && this.touchStartCompleted) {
+                     evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-times-circle w3-left fox-delete';
+                  }
                   evt.target.parentNode.previousSibling.style.display = 'block';
                   evt.target.parentNode.previousSibling.style.opacity = -.01 * xDiff;
                }
                if (xDiff < -100) {
-                  if (!evt.target.parentNode.classList.contains('fox-green')) {
+                  if (!evt.target.parentNode.classList.contains('fox-green') && !this.touchStartCompleted) {
                      evt.target.parentNode.className += ' fox-green';
                      task.completed = true;
                      console.log(task);
                   }
                }
+               if (xDiff < - 150) {
+                  if (!evt.target.parentNode.classList.contains('fox-delete') && this.touchStartCompleted) {
+                     evt.target.parentNode.classList = 'w3-container draggable-card w3-rest fox-red';
+                     task.toDelete = true;
+                  }
+               }
             } else {
-               console.log("left swipe");
+               // console.log("left swipe");
             }
          }
       }
@@ -269,20 +265,36 @@ export class AppComponent implements OnInit, AfterViewInit {
          evt.target.parentNode.style.right = '0px';
          if (!task.completed) {
             evt.target.parentNode.previousSibling.style.display = 'none';
-         } else if (task.completed) {
+         } else if (task.completed && !this.touchStartCompleted) {
             task.bgColor = '#39998E';
             task.color = 'white';
             this.updateTask(task);
+         } else if (task.completed && this.touchStartCompleted && task.toDelete) {
+            task.bgColor = '#b9300e';
+            task.color = 'white';
+            evt.target.parentNode.previousSibling.style.display = 'none';
+            evt.target.parentNode.parentNode.classList += ' hidden';
+            this.timeout(1500).then(() => {
+               this.deleteTask(task);
+            });
+         } else if (task.completed && this.touchStartCompleted) {
+            evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-check w3-left fox-check';
          }
          this.xDown = null;
          this.yDown = null;
       }
    }
 
+   timeout(ms: number): Promise<unknown> { //pass a time in milliseconds to this function
+      return new Promise(resolve => setTimeout(resolve, ms));
+   }
+
    uncompleteTask(task: Task, targetCheck: any) {
       task.completed = false;
       task.bgColor = '#e4e1d8';
       task.color = 'black';
+      task.updatedDate = new Date();
+      this.updateTask(task);
       targetCheck.parentNode.style.display = 'none';
       targetCheck.parentNode.nextSibling.classList = 'w3-container draggable-card w3-rest';
    }

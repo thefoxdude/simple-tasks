@@ -34,6 +34,11 @@
    color: white;
 }
 
+.fox-red {
+   background-color: #b9300e;
+   color: white;
+}
+
 .draggable-card {
    position: relative;
 }
@@ -45,11 +50,35 @@
 
 .fox-check {
    font-size: 2em;
-   background-color: #39998E;
    border-radius: 50%;
+   background-color: #39998E;
    color: white;
    position: relative;
    top: 10px;
    right: 5px;
-   
+}
+
+.fox-delete {
+   font-size: 2em;
+   border-radius: 50%;
+   color: #b9300e;
+   position: relative;
+   top: 10px;
+   right: 5px;
+}
+
+@-webkit-keyframes fadeOut {
+   0% {opacity: 1;}
+   100% {opacity: 0; display: none; visibility: hidden;}
+}
+
+@keyframes fadeOut {
+   0% {opacity: 1;}
+   100% {opacity: 0; display: none; visibility: hidden;}
+}
+
+.hidden {
+   -webkit-animation: fadeOut 2s;
+   animation: fadeOut 2s;
+   animation-fill-mode: forwards;
 }

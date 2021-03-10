@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from "@angular/fire/auth";
-import { Observable } from 'rxjs';
 
 @Injectable({
 providedIn: 'root'
@@ -51,7 +50,6 @@ export class AuthenticationService {
          .signInWithEmailAndPassword(email, password)
          .then(res => {
             console.log('You are Successfully logged in!');
-            console.log();
             this.angularFireAuth.currentUser.then(user => {
                // console.log(user.uid);
                resolve(user.uid);
