@@ -173,17 +173,17 @@ export class AppComponent implements AfterViewInit {
 
    async updateTask(task: Task) {
       console.log('updated');
-      // this.db.collection('tasks').doc(task.id).set({
-      //    taskName: task.taskName,
-      //    details: task.details,
-      //    updatedDate: task.updatedDate,
-      //    completed: task.completed,
-      //    column: task.column
-      // }, {merge: true});
+      this.db.collection('tasks').doc(task.id).set({
+         taskName: task.taskName,
+         details: task.details,
+         updatedDate: task.updatedDate,
+         completed: task.completed,
+         column: task.column
+      }, {merge: true});
    }
 
    async deleteTask(task: Task) {
-      // this.db.collection('tasks').doc(task.id).delete();
+      this.db.collection('tasks').doc(task.id).delete();
       console.log("deleted");
    }
 
