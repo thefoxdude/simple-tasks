@@ -1,21 +1,25 @@
-.swipeView {
-   display: grid;
-   grid-template-columns: repeat(4, 100%);
-   will-change: transform;
-   align-content: center;
-   overflow-x: auto;
-   scroll-snap-coordinate: 0 0;
-   scroll-snap-points-x: repeat(100%);
-   scroll-snap-type: x mandatory;
-   -webkit-overflow-scrolling: touch;
-   background-color: #2B4D59;
-   color: white;
+@media only screen and (max-width: 900px) {
+   .swipeView {
+      display: grid;
+      grid-template-columns: repeat(4, 100%);
+      will-change: transform;
+      align-content: center;
+      overflow-x: auto;
+      scroll-snap-coordinate: 0 0;
+      scroll-snap-points-x: repeat(100%);
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      background-color: #2B4D59;
+      color: white;
+   }
+   
+   section {
+      height: 100vh;
+      scroll-snap-align: center;
+   }
 }
 
-section {
-   height: 100vh;
-   scroll-snap-align: center;
-}
+
 
 .task-card {
    margin-bottom: 2px;

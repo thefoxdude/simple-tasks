@@ -115,7 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                   task.color = 'white';
                }
             } else if (task.column = "This Week") {
-
+               
             }
          }
       }
@@ -208,6 +208,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       const firstTouch = this.getTouches(evt)[0];
       this.xDown = firstTouch.clientX;
       this.yDown = firstTouch.clientY;
+      this.stopBubble(evt);
    };
   
    handleTouchMove(evt: any, task: Task) {
@@ -255,5 +256,13 @@ export class AppComponent implements OnInit, AfterViewInit {
          this.xDown = null;
          this.yDown = null;
       }
+   }
+
+   uncompleteTask(task: Task, targetCheck: any) {
+      task.completed = false;
+      task.bgColor = '#e4e1d8';
+      task.color = 'black';
+      targetCheck.parentNode.style.display = 'none';
+      targetCheck.parentNode.nextSibling.classList = 'w3-container draggable-card w3-rest';
    }
 }

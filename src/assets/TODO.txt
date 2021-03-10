@@ -1,0 +1,35 @@
+Database Design:
+- Task
+* id
+* taskName
+* createdDate
+* column
+* userID
+* completed
+* details
+
+- User
+* username
+* password
+* id
+
+Done
+* Filter tasks by userID
+* Create new tasks using userID
+* Create login modal
+* Create "new" modal
+* Create columns
+* Allow for login "remember"
+* Create logic to update columns on day
+* Create color scheme
+* Figure out hosting
+* Create slide to complete
+
+TODO
+* Only show uncompleted
+* Update tasks
+* Create slide second time to delete
+* Beautify UI
+* Create desktop UI
+* Create logout
+* Finish "This Week"
