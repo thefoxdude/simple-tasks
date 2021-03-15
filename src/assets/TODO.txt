@@ -27,9 +27,9 @@ Done
 * Only show uncompleted (toggle with default being off)
 * Update tasks
 * Create slide second time to delete
+* Beautify UI
 
 TODO
-* Beautify UI
 * Create desktop UI
 * Create logout
 * Finish "This Week" logic

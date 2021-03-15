@@ -1,3 +1,6 @@
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <div *ngIf="userId == null" class="w3-modal" id="loginModal">
    <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px; padding-bottom: 30px;">
       <div class="w3-center"><br>
@@ -8,17 +11,25 @@
             <label for="email"><b>Email address</b></label>
             <input type="text" [(ngModel)]="email" name="email" placeholder="email" class="w3-input w3-border w3-margin-bottom" required>
          </div>
+         <div *ngIf="signingUp">
+            <label for="username"><b>Username</b></label>
+            <input type="text" [(ngMpdel)]="username" name="username" placeholder="username" class="w3-input w3-border w3-margin-bottom" required>
+         </div>
          <div>
             <label for="pwd"><b>Password</b></label>
             <input type="password" [(ngModel)]="password" name="pwd" placeholder="password" class="w3-input w3-border w3-margin-bottom" required>
          </div>
-         <button (click)="signIn()" class="w3-button w3-green w3-left">Login</button>
-         <button (click)="signUp()" class="w3-button w3-gray w3-right">Sign Up</button>
+         <div class="w3-container w3-center" *ngIf="!signingUp">
+            <span class="fox-link" (click)="showSignUp()">Sign Up</span>
+         </div>
+         <button (click)="signIn()" class="w3-button w3-green w3-right" *ngIf="!signingUp">Login</button>
+         <button (click)="signUp()" class="w3-button w3-green w3-right" *ngIf="signingUp">Sign Up</button>
+         <button (click)="showSignUp()" class="w3-button w3-gray w3-left" *ngIf="signingUp">Cancel</button>
       </form>
    </div>
 </div>
 
-<div class="swipeView">
+<div class="swipeView w3-hide-medium w3-hide-large">
    <section class="today w3-container">
       <div class="w3-center w3-display-container w3-margin-bottom">
          <h1>Today</h1>
@@ -37,7 +48,7 @@
          </div>
       </div>
       <div class="footer">
-         <p>Build No. 1</p>
+         <p>Build No. {{buildNo}}</p>
       </div>
    </section>
    <section class="tomorrow w3-container">
@@ -47,10 +58,10 @@
       </div>
       <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of tomorrowTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
          <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-            <i class="fa fa-check w3-left fox-check fox-green" aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+            <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
          </div>
          <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
-            <h4 (touchstart)="handleTouchStart($event)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+            <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
          </div>
       </div>
    </section>
@@ -61,13 +72,94 @@
       </div>
       <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of thisWeekTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
          <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-            <i class="fa fa-check w3-left fox-check fox-green" aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+            <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
          </div>
          <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
-            <h4 (touchstart)="handleTouchStart($event)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+            <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
          </div>
       </div>
    </section>
+</div>
+
+<div class="w3-hide-small">
+   <div class="w3-container w3-white w3-padding-bottom">
+      <div class="w3-center">
+         <h1>Simple Tasks</h1>
+      </div>
+      <div class="w3-display-container">
+         <div class="w3-left">
+            <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()">
+            <label> Show Completed</label>
+         </div>
+         <div class="w3-right">
+            <button class="w3-button fox-green" (click)="openModal('taskModal', 'Today')">NewTask</button>
+         </div>
+      </div>
+
+   </div>
+   <div class="w3-row w3-padding-top-32">
+      <section class="today w3-container w3-col m4">
+         <div class="w3-center w3-display-container w3-margin-bottom">
+            <h1>Today</h1>
+         </div>
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            
+            <div class="w3-display-container w3-container draggable-card w3-rest">
+               <div class="w3-display-hover w3-col fox-check-container">
+                  <i aria-hidden="true" (click)="clickCheck(task, $event)" class="fa fa-check w3-left fox-check"></i>
+               </div>
+               <h4 (click)="selectTask(task.id)" class="fox-card-text">
+                  {{ task.taskName }}
+               </h4>
+               <div class="w3-display-hover w3-display-topright w3-col fox-delete-container" *ngIf="task.completed">
+                  <i aria-hidden="true" (click)="clickDelete(task, $event)" class="fa fa-times-circle w3-left fox-delete"></i>
+               </div>
+            </div>
+         </div>
+         <div class="footer">
+            <span class="w3-margin-right">Build No. {{buildNo}}</span>
+            <a href="." (click)="logout()">Logout</a>
+         </div>
+      </section>
+      <section class="tomorrow w3-container w3-col m4">
+         <div class="w3-center w3-display-container w3-margin-bottom">
+            <h1>Tomorrow</h1>
+         </div>
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of tomorrowTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            
+            <div class="w3-display-container w3-container draggable-card w3-rest">
+               <div class="w3-display-hover w3-col fox-check-container">
+                  <i aria-hidden="true" (click)="clickCheck(task, $event)" class="fa fa-check w3-left fox-check"></i>
+               </div>
+               <h4 (click)="selectTask(task.id)" class="fox-card-text">
+                  {{ task.taskName }}
+               </h4>
+               <div class="w3-display-hover w3-display-topright w3-col fox-delete-container" *ngIf="task.completed">
+                  <i aria-hidden="true" (click)="clickDelete(task, $event)" class="fa fa-times-circle w3-left fox-delete"></i>
+               </div>
+            </div>
+         </div>
+      </section>
+      <section class="thisWeek w3-container w3-col m4">
+         <div class="w3-center w3-display-container w3-margin-bottom">
+            <h1>This Week</h1>
+         </div>
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of thisWeekTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            
+            <div class="w3-display-container w3-container draggable-card w3-rest">
+               <div class="w3-display-hover w3-col fox-check-container">
+                  <i aria-hidden="true" (click)="clickCheck(task, $event)" class="fa fa-check w3-left fox-check"></i>
+               </div>
+               <h4 (click)="selectTask(task.id)" class="fox-card-text">
+                  {{ task.taskName }}
+               </h4>
+               <div class="w3-display-hover w3-display-topright w3-col fox-delete-container" *ngIf="task.completed">
+                  <i aria-hidden="true" (click)="clickDelete(task, $event)" class="fa fa-times-circle w3-left fox-delete"></i>
+               </div>
+            </div>
+         </div>
+      </section>
+   </div>
 </div>
 
 <div class="w3-modal" id="taskModal" (click)="closeModal('taskModal')">
@@ -78,25 +170,28 @@
       <form class="w3-container">
          <div>
             <label for="title">Title:</label>
-            <input type="text" [(ngModel)]="currentTask.taskName" id="title" name="title" placeholder="Task Name">
+            <input type="text" [(ngModel)]="currentTask.taskName" id="title" name="title"
+            placeholder="Task Name" class="w3-input w3-border w3-margin-bottom" required>
          </div>
          <div>
             <label for="column">Column:</label>
-            <select [(ngModel)]="currentTask.column" id="column" name="column">
+            <select [(ngModel)]="currentTask.column" id="column" name="column" class="w3-select w3-border">
                <option></option>
                <option *ngFor="let column of columns | keyvalue" [ngValue]="column.value">{{ column.value }}</option>
             </select>
          </div>
          <div>
             <label for="details">Details:</label>
-            <textarea type="textarea" [(ngModel)]="currentTask.details" id="details" placeholder="Task Details" name="details"></textarea>
+            <textarea type="textarea" [(ngModel)]="currentTask.details" id="details" 
+                     placeholder="Task Details" name="details" class="w3-input w3-border w3-margin-bottom">
+            </textarea>
          </div>
-         <div>
-            <input type="checkbox" [(ngModel)]="currentTask.completed" id="completed" name="completed">
-            <label for="completed">Completed:</label>
+         <div class="w3-margin-bottom">
+            <input type="checkbox" [(ngModel)]="currentTask.completed" id="completed" name="completed" class="w3-check">
+            <label for="completed"> Completed</label>
          </div>
-         <button (click)="saveToDatabase()" *ngIf="currentTask.id == null">Save 1</button>
-         <button (click)="updateTask(currentTask)" *ngIf="currentTask.id != null">Save 2</button>
+         <button (click)="saveToDatabase()" *ngIf="currentTask.id == null" class="w3-button fox-green w3-right w3-margin-top">Create</button>
+         <button (click)="updateTask(currentTask)" *ngIf="currentTask.id != null" class="w3-button fox-green w3-right w3-margin-top">Update</button>
       </form>
    </div>
 </div>

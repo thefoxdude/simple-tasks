@@ -17,9 +17,26 @@
       height: 100vh;
       scroll-snap-align: center;
    }
+
+   .fox-check-container {
+      display: none;
+   }
+
+   .fox-delete {
+      top: 10px;
+      right: 5px;
+   }
 }
 
+.w3-padding-bottom {
+   padding-bottom: 50px;
+}
 
+.w3-hide-small {
+   background-color: #2B4D59;
+   color: white;
+   height: 100vh;
+}
 
 .task-card {
    margin-bottom: 2px;
@@ -30,8 +47,8 @@
 }
 
 .fox-green {
-   background-color: #39998E;
-   color: white;
+   background-color: #39998E !important;
+   color: white !important;
 }
 
 .fox-red {
@@ -43,11 +60,6 @@
    position: relative;
 }
 
-.fox-check-container {
-   display: block;
-   display: none;
-}
-
 .fox-check {
    font-size: 2em;
    border-radius: 50%;
@@ -55,7 +67,6 @@
    color: white;
    position: relative;
    top: 10px;
-   right: 5px;
 }
 
 .fox-delete {
@@ -64,7 +75,25 @@
    color: #b9300e;
    position: relative;
    top: 10px;
-   right: 5px;
+}
+
+@media only screen and (min-width: 900px) {
+   .fox-check-container, .fox-delete-container {
+      width: 20px;
+   }
+
+   .fox-check:hover, .fox-delete:hover {
+      cursor: pointer;
+   }
+   
+   .draggable-card:hover .fox-card-text{
+      position: relative;
+      right: -20px;
+   }
+
+   .fox-delete {
+      right: 20px;
+   }
 }
 
 @-webkit-keyframes fadeOut {
@@ -86,4 +115,12 @@
 .footer {
    position: absolute;
    bottom: 8px;
+}
+
+.fox-link {
+   text-decoration: underline;
+}
+
+.fox-link:hover {
+   cursor: pointer;
 }

@@ -20,6 +20,8 @@ export class AppComponent implements AfterViewInit {
    email: string;
    password: string;
    userId: string;
+   username: string;
+   signingUp: boolean;
    currentTask: Task;
    columns = Columns;
    todayTasks: Task[];
@@ -34,13 +36,15 @@ export class AppComponent implements AfterViewInit {
    yDown = null;
    showCompleted: boolean;
    touchStartCompleted: boolean;
+   buildNo: number;
    
 
    constructor(private db: AngularFirestore, 
                private authenticationService: AuthenticationService,
                private dbService: DatabaseService) {
       this.currentTask = new Task();
-      this.showCompleted = false;
+      this.showCompleted = true;
+      this.signingUp = false;
       if (this.authenticationService.isLoggedIn()) {
          let user = JSON.parse(localStorage.getItem('user'));
          // console.log(user);
@@ -49,6 +53,7 @@ export class AppComponent implements AfterViewInit {
       } else {
          this.userId = null;
       }
+      this.buildNo = 3;
    }
 
    ngAfterViewInit() {
@@ -77,6 +82,10 @@ export class AppComponent implements AfterViewInit {
       
    signOut() {
       this.authenticationService.SignOut();
+   }
+
+   showSignUp() {
+      this.signingUp = !this.signingUp;
    }
 
    getTasks() {
@@ -173,6 +182,11 @@ export class AppComponent implements AfterViewInit {
 
    async updateTask(task: Task) {
       console.log('updated');
+      if (this.originalTask && this.originalTask.column != task.column) {
+         task.updatedDate = new Date();
+      } else {
+         task.updatedDate = task.createdDate;
+      }
       this.db.collection('tasks').doc(task.id).set({
          taskName: task.taskName,
          details: task.details,
@@ -180,6 +194,7 @@ export class AppComponent implements AfterViewInit {
          completed: task.completed,
          column: task.column
       }, {merge: true});
+      this.closeModal('taskModal');
    }
 
    async deleteTask(task: Task) {
@@ -241,9 +256,7 @@ export class AppComponent implements AfterViewInit {
                }
                if (xDiff < -100) {
                   if (!evt.target.parentNode.classList.contains('fox-green') && !this.touchStartCompleted) {
-                     evt.target.parentNode.className += ' fox-green';
-                     task.completed = true;
-                     console.log(task);
+                     this.completeTask(task, evt, true);
                   }
                }
                if (xDiff < - 150) {
@@ -252,8 +265,6 @@ export class AppComponent implements AfterViewInit {
                      task.toDelete = true;
                   }
                }
-            } else {
-               // console.log("left swipe");
             }
          }
       }
@@ -289,6 +300,33 @@ export class AppComponent implements AfterViewInit {
       return new Promise(resolve => setTimeout(resolve, ms));
    }
 
+   clickCheck(task: Task, evt: any) {
+      if (!task.completed) {
+         this.completeTask(task, evt, false);
+      } else {
+         this.uncompleteTask(task, evt.target);
+      }
+   }
+
+   completeTask(task: Task, evt: any, mobile: boolean) {
+      if (mobile) {
+         evt.target.parentNode.className += ' fox-green';
+      } else {
+         evt.target.parentNode.parentNode.className += ' fox-green';
+      }
+      task.completed = true;
+   }
+
+   clickDelete(task: Task, evt: any) {
+      task.bgColor = '#b9300e';
+      task.color = 'white';
+      evt.target.parentNode.previousSibling.style.display = 'none';
+      evt.target.parentNode.parentNode.classList += ' hidden';
+      this.timeout(1500).then(() => {
+         this.deleteTask(task);
+      });
+   }
+
    uncompleteTask(task: Task, targetCheck: any) {
       task.completed = false;
       task.bgColor = '#e4e1d8';
@@ -310,5 +348,12 @@ export class AppComponent implements AfterViewInit {
          this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
          this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
       }
+   }
+
+   logout() {
+      console.log("logout");
+      this.authenticationService.SignOut();
+      this.tasks = [];
+      this.userId = null;
    }
 }
