@@ -124,3 +124,16 @@
 .fox-link:hover {
    cursor: pointer;
 }
+
+@keyframes jiggle {
+   0% {
+     transform: rotate(-1deg);
+   }
+   50% {
+     transform: rotate(1deg);
+   }
+}
+
+.wiggle {
+   animation: jiggle 0.2s infinite;
+}

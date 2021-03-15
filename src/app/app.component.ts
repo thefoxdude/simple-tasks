@@ -7,6 +7,7 @@ import * as clone from 'clone';
 import { DatabaseService } from './services/DatabaseService.service';
 
 
+
 @Component({
    selector: 'app-root',
    templateUrl: './app.component.html',
@@ -37,6 +38,13 @@ export class AppComponent implements AfterViewInit {
    showCompleted: boolean;
    touchStartCompleted: boolean;
    buildNo: number;
+   item: any;
+   timerID: any;
+   counter: any;
+
+   pressHoldEvent: any;
+   pressHoldDuration: any;
+   
    
 
    constructor(private db: AngularFirestore, 
@@ -60,6 +68,24 @@ export class AppComponent implements AfterViewInit {
       if (this.userId == null) {
          (<HTMLElement> document.getElementById("loginModal")).style.display = 'block';
       }
+      this.item = document.querySelector("#item");
+      this.counter = 0;
+
+      this.pressHoldEvent = new CustomEvent("pressHold");
+
+    // Increase or decreae value to adjust how long
+    // one should keep pressing down before the pressHold
+    // event fires
+      this.pressHoldDuration = 50;
+      // this.item.addEventListener("mousedown", this.pressingDown, false);
+      // this.item.addEventListener("mouseup", this.notPressingDown, false);
+      // this.item.addEventListener("mouseleave", this.notPressingDown, false);
+
+      // this.item.addEventListener("touchstart", this.pressingDown, false);
+      // this.item.addEventListener("touchend", this.notPressingDown, false);
+
+      // // Listening for our custom pressHold event
+      // this.item.addEventListener("pressHold", this.doSomething, false);
    }
 
    signUp() {
@@ -148,9 +174,11 @@ export class AppComponent implements AfterViewInit {
    selectTask(taskId: string) {
       console.log(taskId);
       this.currentTask = this.tasks.find(x => x.id == taskId);
-      this.originalTask = clone<Task>(this.currentTask);
-      console.log(this.currentTask);
-      this.openModal('taskModal', '');
+      if (!this.currentTask.selected) {
+         this.originalTask = clone<Task>(this.currentTask);
+         console.log(this.currentTask);
+         this.openModal('taskModal', '');
+      }
    }
 
    createcurrentTask() {
@@ -315,6 +343,7 @@ export class AppComponent implements AfterViewInit {
          evt.target.parentNode.parentNode.className += ' fox-green';
       }
       task.completed = true;
+      this.updateTask(task);
    }
 
    clickDelete(task: Task, evt: any) {
@@ -356,4 +385,45 @@ export class AppComponent implements AfterViewInit {
       this.tasks = [];
       this.userId = null;
    }
+
+   pressingDown(e, task: Task) {
+      // Start the timer
+      this.startTimer(e, task);
+      e.preventDefault();
+
+      console.log("Pressing!");
+   }
+
+   notPressingDown(e) {
+      // Stop the timer
+      cancelAnimationFrame(this.timerID);
+      this.counter = 0;
+
+      console.log("Not pressing!");
+    }
+
+    //
+    // Runs at 60fps when you are pressing down
+    //
+   startTimer(e, task: Task) {
+      console.log("Timer tick!");
+
+      const handler = () => {
+         if (this.counter < this.pressHoldDuration) {
+            this.timerID = window.requestAnimationFrame(handler);
+            this.counter++;
+            console.log("inside loop");
+         } else {
+            console.log("Press threshold reached!");
+            e.target.parentNode.parentNode.classList += ' wiggle';
+            task.selected = true;
+            this.item.dispatchEvent(this.pressHoldEvent);
+         }
+      }
+      window.requestAnimationFrame(handler);
+   }
+
+   doSomething(e) {
+      console.log("pressHold event fired!");
+    }
 }

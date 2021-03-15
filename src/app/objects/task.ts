@@ -11,6 +11,7 @@ export class Task {
    dueDate: any;
    updatedDate: any;
    toDelete: boolean = false;
+   selected: boolean = false;
 }
 
 export enum Columns {

@@ -48,7 +48,9 @@
          </div>
       </div>
       <div class="footer">
-         <p>Build No. {{buildNo}}</p>
+         
+         <span class="w3-margin-right">Build No. {{buildNo}}</span>
+         <a href="." (click)="logout()">Logout</a>
       </div>
    </section>
    <section class="tomorrow w3-container">
@@ -108,7 +110,7 @@
                <div class="w3-display-hover w3-col fox-check-container">
                   <i aria-hidden="true" (click)="clickCheck(task, $event)" class="fa fa-check w3-left fox-check"></i>
                </div>
-               <h4 (click)="selectTask(task.id)" class="fox-card-text">
+               <h4 (click)="selectTask(task.id)" class="fox-card-text" (mousedown)="pressingDown($event)" (mouseup)="notPressingDown($event)" (mouseleave)="notPressingDown($event)" (pressHold)="doSomething($event)">
                   {{ task.taskName }}
                </h4>
                <div class="w3-display-hover w3-display-topright w3-col fox-delete-container" *ngIf="task.completed">
