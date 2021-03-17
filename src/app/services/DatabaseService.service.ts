@@ -3,6 +3,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFirestoreCollection } from '@angular/fire/firestore/public_api';
 import { Observable } from 'rxjs';
 import { Task } from '../objects/task';
+import { User } from '../objects/user';
 
 @Injectable({
    providedIn: 'root'
@@ -10,6 +11,8 @@ import { Task } from '../objects/task';
 export class DatabaseService {
    collection: AngularFirestoreCollection<Task>;
    objects$: Observable<Task[]>;
+   collectionUsers: AngularFirestoreCollection<User>;
+   objectsUsers$: Observable<User[]>;
    tasks: Task[];
 
    constructor(private db: AngularFirestore) { }
@@ -20,6 +23,13 @@ export class DatabaseService {
       this.collection = this.db.collection("tasks", tasks => tasks.where('userID', '==', userId));
       this.objects$ = this.collection.valueChanges({idField: 'id'});
       return this.objects$;
+   }
+
+   getUser(userId: string): Observable<User[]> {
+      console.log(userId);
+      this.collectionUsers = this.db.collection("users", user => user.where('userID', '==', userId));
+      this.objectsUsers$ = this.collectionUsers.valueChanges();
+      return this.objectsUsers$;
    }
 
    async updateTask(task: Task) {
@@ -44,4 +54,13 @@ export class DatabaseService {
       });
       console.log('Added document with ID: ', result.id);
    }
+
+   async saveNewUser(userID: string, username: string) {
+      let result = await this.db.collection('users').add({
+         userID: userID,
+         username: username
+      });
+      console.log('Added user with username: ', result.id);
+   }
+   
 }

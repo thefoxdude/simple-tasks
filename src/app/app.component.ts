@@ -57,6 +57,7 @@ export class AppComponent implements AfterViewInit {
          let user = JSON.parse(localStorage.getItem('user'));
          // console.log(user);
          this.userId = user.uid;
+         this.username = user.username;
          this.getTasks();
       } else {
          this.userId = null;
@@ -89,7 +90,7 @@ export class AppComponent implements AfterViewInit {
    }
 
    signUp() {
-      this.authenticationService.SignUp(this.email, this.password).then(userId => {
+      this.authenticationService.SignUp(this.email, this.password, this.username).then(userId => {
          this.userId = <string> userId;
          this.getTasks();
       }, error => {
@@ -121,11 +122,13 @@ export class AppComponent implements AfterViewInit {
          this.tasks = tasks;
          this.updateTasks();
          this.totalTomorrowTasks = this.tasks.filter(x => x.column == Columns.Tomorrow).sort(a => {return a.completed ? 1 : -1});
-         this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
-         this.totalTodayTasks = this.tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});;
-         this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
-         this.totalThisWeekTasks = this.tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});;
-         this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
+         this.totalTodayTasks = this.tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});
+         this.totalThisWeekTasks = this.tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});
+         if (!this.showCompleted) {
+            this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
+            this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
+            this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
+         }
       });
    }
 

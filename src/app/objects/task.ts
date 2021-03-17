@@ -12,6 +12,7 @@ export class Task {
    updatedDate: any;
    toDelete: boolean = false;
    selected: boolean = false;
+   orderNo: number;
 }
 
 export enum Columns {
