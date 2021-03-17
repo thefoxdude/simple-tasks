@@ -428,5 +428,5 @@ export class AppComponent implements AfterViewInit {
 
    doSomething(e) {
       console.log("pressHold event fired!");
-    }
+   }
 }

@@ -10,6 +10,7 @@ import { environment } from "src/environments/environment";
 import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from './services/AuthenticationService.service';
 import { DatabaseService } from './services/DatabaseService.service';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
    declarations: [
@@ -20,7 +21,8 @@ import { DatabaseService } from './services/DatabaseService.service';
       AngularFireModule.initializeApp(environment.firebaseConfig),
       AngularFirestoreModule,
       FormsModule,
-      AngularFireAuthModule
+      AngularFireAuthModule,
+      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
    ],
    providers: [
       AuthenticationService,
