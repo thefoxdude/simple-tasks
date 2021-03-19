@@ -1,6 +1,9 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
+
+<!-- <button *ngIf="Pwa.promptEvent" (click)="installPwa()">Install</button> -->
+
 <div *ngIf="userId == null" class="w3-modal" id="loginModal">
    <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px; padding-bottom: 30px;">
       <div class="w3-center"><br>
@@ -39,31 +42,34 @@
             <label> Show Completed</label>
          </div>
       </div>
-      <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
-         <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-            <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+      <div class="fox-task-column">
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
+               <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+            </div>
+            <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
+               <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+            </div>
          </div>
-         <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
-            <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
-         </div>
-      </div>
-      <div class="footer">
-         
-         <span class="w3-margin-right">Build No. {{buildNo}}</span>
-         <a href="." (click)="logout()">Logout</a>
       </div>
    </section>
    <section class="tomorrow w3-container">
       <div class="w3-center w3-display-container w3-margin-bottom">
          <h2>Tomorrow</h2>
          <a class="w3-button w3-large w3-circle w3-xlarge w3-ripple fox-green w3-display-topright" (click)="openModal('taskModal', 'Tomorrow')">+</a>
-      </div>
-      <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of tomorrowTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
-         <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-            <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+         <div class="w3-margin-bottom w3-left">
+            <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()">
+            <label> Show Completed</label>
          </div>
-         <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
-            <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+      </div>
+      <div class="fox-task-column">
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of tomorrowTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
+               <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+            </div>
+            <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
+               <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+            </div>
          </div>
       </div>
    </section>
@@ -71,16 +77,26 @@
       <div class="w3-center w3-display-container w3-margin-bottom">
          <h2>This Week</h2>
          <a class="w3-button w3-large w3-circle w3-xlarge w3-ripple fox-green w3-display-topright" (click)="openModal('taskModal', 'This Week')">+</a>
-      </div>
-      <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of thisWeekTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
-         <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-            <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+         <div class="w3-margin-bottom w3-left">
+            <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()">
+            <label> Show Completed</label>
          </div>
-         <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
-            <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+      </div>
+      <div class="fox-task-column">
+         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of thisWeekTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
+               <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+            </div>
+            <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
+               <h4 (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">{{ task.taskName }}</h4>
+            </div>
          </div>
       </div>
    </section>
+   <div class="footer">
+      <span class="w3-margin-right">Build No. {{buildNo}}</span>
+      <a href="." (click)="logout()">Logout</a>
+   </div>
 </div>
 
 <div class="w3-hide-small">

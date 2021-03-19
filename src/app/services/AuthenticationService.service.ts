@@ -17,15 +17,8 @@ export class AuthenticationService {
       this.angularFireAuth.authState.subscribe(user => {
          if (user) {
             this.userData = user;
-            this.dbSerivce.getUser(user.uid).subscribe(username => {
-               console.log("Username object: " + username);
-               if (username.length > 0) {
-                  this.userData.username = username[0].username;
-                  console.log("Here's the username: " + this.userData.username);
-               }
-               localStorage.setItem('user', JSON.stringify(this.userData));
-               JSON.parse(localStorage.getItem('user'));
-            });
+            localStorage.setItem('user', JSON.stringify(this.userData));
+            JSON.parse(localStorage.getItem('user'));
          } else {
             localStorage.setItem('user', null);
             JSON.parse(localStorage.getItem('user'));
@@ -63,16 +56,10 @@ export class AuthenticationService {
          .then(res => {
             console.log('You are Successfully logged in!');
             this.angularFireAuth.currentUser.then(user => {
-               this.dbSerivce.getUser(user.uid).subscribe(username => {
-                  console.log("Username object: " + username);
-                  if (username.length > 0) {
-                     this.userData.username = username[0].username;
-                     console.log("Here's the username: " + this.userData.username);
-                  }
-                  localStorage.setItem('user', JSON.stringify(this.userData));
-                  JSON.parse(localStorage.getItem('user'));
-                  resolve(user.uid);
-               });
+               this.userData = user;
+               localStorage.setItem('user', JSON.stringify(this.userData));
+               JSON.parse(localStorage.getItem('user'));
+               resolve(user.uid);
                // console.log(user.uid);
             });
          })

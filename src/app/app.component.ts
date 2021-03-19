@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthenticationService } from './services/AuthenticationService.service';
 import * as clone from 'clone';
 import { DatabaseService } from './services/DatabaseService.service';
+import { PwaService } from './services/PwaService';
 
 
 
@@ -49,7 +50,7 @@ export class AppComponent implements AfterViewInit {
 
    constructor(private db: AngularFirestore, 
                private authenticationService: AuthenticationService,
-               private dbService: DatabaseService) {
+               private dbService: DatabaseService,) {
       this.currentTask = new Task();
       this.showCompleted = true;
       this.signingUp = false;
@@ -57,6 +58,13 @@ export class AppComponent implements AfterViewInit {
          let user = JSON.parse(localStorage.getItem('user'));
          // console.log(user);
          this.userId = user.uid;
+         this.dbService.getUser(user.uid).subscribe(username => {
+            console.log("Username object: " + username);
+            if (username.length > 0) {
+               this.username = username[0].username;
+            }
+            
+         });
          this.username = user.username;
          this.getTasks();
       } else {
@@ -128,6 +136,10 @@ export class AppComponent implements AfterViewInit {
             this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
             this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
             this.thisWeekTasks = this.totalThisWeekTasks.filter(x => !x.completed);
+         } else {
+            this.tomorrowTasks = this.totalTomorrowTasks;
+            this.todayTasks = this.totalTodayTasks;
+            this.thisWeekTasks = this.totalThisWeekTasks;
          }
       });
    }
@@ -429,4 +441,8 @@ export class AppComponent implements AfterViewInit {
    doSomething(e) {
       console.log("pressHold event fired!");
    }
+
+   // installPwa(): void {
+   //    Pwa.promptEvent.prompt();
+   // }
 }
