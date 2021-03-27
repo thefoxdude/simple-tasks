@@ -11,11 +11,12 @@
       -webkit-overflow-scrolling: touch;
       background-color: #2B4D59;
       color: white;
+      height: -webkit-fill-available;
       height: 100vh;
    }
    
    section {
-      height: 100%;
+      max-height: 80vh;
       scroll-snap-align: center;
    }
 
@@ -35,6 +36,15 @@
    }
 }
 
+.fox-task-container {
+   overflow-y: scroll;
+   max-height: 60vh;
+}
+
+.fox-task-container::-webkit-scrollbar {
+   display: none;
+}
+
 .w3-padding-bottom {
    padding-bottom: 50px;
 }
@@ -50,7 +60,13 @@
    background-color: #e4e1d8;
    color: black;
    width: 100%;
-   overflow-x: hidden;
+   overflow: hidden;
+}
+
+.fox-card-text {
+   text-overflow: ellipsis;
+   overflow: hidden;
+   white-space: nowrap;
 }
 
 .fox-green {
@@ -65,6 +81,9 @@
 
 .draggable-card {
    position: relative;
+   height: 45px;
+   text-overflow: ellipsis;
+   width: 90%;
 }
 
 .fox-check {
@@ -99,7 +118,7 @@
    }
 
    .fox-delete {
-      right: 20px;
+      top: 8px;
    }
 }
 
@@ -144,4 +163,58 @@
 
 .wiggle {
    animation: jiggle 0.2s infinite;
+}
+
+.fox-flash-red {
+   -webkit-animation-name: fox-flash-red;
+   animation-name: fox-flash-red;
+    -webkit-animation-duration: 1000ms;
+    animation-duration: 1000ms;
+    -webkit-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+    -webkit-animation-timing-function: ease-in-out;
+    animation-timing-function: ease-in-out;
+}
+
+@-webkit-keyframes fox-flash-red {
+   0% {
+       background-color: #b9300e;
+       opacity:1;
+   }
+   22% {
+       background-color: #b9300e;
+   }
+   77% {
+       background-color: #b9300e;
+   }
+   100% {
+       background-color: white;
+   }
+}
+
+@keyframes fox-flash-red {
+   0% {
+      background-color: #b9300e;
+      opacity:1;
+   }
+   22% {
+         background-color: #b9300e;
+   }
+   77% {
+         background-color: #b9300e;
+   }
+   100% {
+         background-color: white;
+   }
+}
+
+.fox-welcome {
+   position: relative;
+   right: 30px;
+   z-index: 1;
+}
+
+.new-button {
+   position: relative;
+   z-index: 2;
 }

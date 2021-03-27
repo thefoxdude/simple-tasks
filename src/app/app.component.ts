@@ -42,6 +42,7 @@ export class AppComponent implements AfterViewInit {
    item: any;
    timerID: any;
    counter: any;
+   errorMessages: string[];
 
    pressHoldEvent: any;
    pressHoldDuration: any;
@@ -58,19 +59,14 @@ export class AppComponent implements AfterViewInit {
          let user = JSON.parse(localStorage.getItem('user'));
          // console.log(user);
          this.userId = user.uid;
-         this.dbService.getUser(user.uid).subscribe(username => {
-            console.log("Username object: " + username);
-            if (username.length > 0) {
-               this.username = username[0].username;
-            }
-            
-         });
+         this.getUsername(this.userId);
          this.username = user.username;
          this.getTasks();
       } else {
          this.userId = null;
       }
-      this.buildNo = 3;
+      this.buildNo = 6;
+      this.errorMessages = [];
    }
 
    ngAfterViewInit() {
@@ -97,9 +93,19 @@ export class AppComponent implements AfterViewInit {
       // this.item.addEventListener("pressHold", this.doSomething, false);
    }
 
+   getUsername(userId: string) {
+      this.dbService.getUser(userId).subscribe(username => {
+         console.log("Username object: " + username);
+         if (username.length > 0) {
+            this.username = username[0].username;
+         }
+      });
+   }
+
    signUp() {
       this.authenticationService.SignUp(this.email, this.password, this.username).then(userId => {
          this.userId = <string> userId;
+         this.getUsername(this.userId);
          this.getTasks();
       }, error => {
          console.log("We didn't make it: ", error);
@@ -109,10 +115,33 @@ export class AppComponent implements AfterViewInit {
    signIn() {
       this.authenticationService.SignIn(this.email, this.password).then(userId => {
          this.userId = <string> userId;
+         this.getUsername(this.userId);
          this.getTasks();
       }, error => {
+         this.showError(error);
          console.log("We didn't make it: ", error);
       });
+   }
+
+   showError(error: Error) {
+      let email = <HTMLInputElement> document.getElementById('email');
+      let password = <HTMLInputElement> document.getElementById('password');
+      if (this.email == null || this.password == null) {
+         this.flashItem(email);
+         this.errorMessages.push('Email is required\n');
+         if (this.password == null) {
+            this.flashItem(password);
+            this.errorMessages.push('Password is required\n');
+         }
+      } else {
+         if (error.toString().includes('email')) {
+            this.flashItem(email);
+            this.errorMessages.push('Email is incorrect\n');
+         } else if (error.toString().includes('password')) {
+            this.flashItem(password);
+            this.errorMessages.push('Password is incorrect\n');
+         }
+      }
    }
       
    signOut() {
@@ -129,9 +158,10 @@ export class AppComponent implements AfterViewInit {
          // console.log(tasks);
          this.tasks = tasks;
          this.updateTasks();
-         this.totalTomorrowTasks = this.tasks.filter(x => x.column == Columns.Tomorrow).sort(a => {return a.completed ? 1 : -1});
-         this.totalTodayTasks = this.tasks.filter(x => x.column == Columns.Today).sort(a => {return a.completed ? 1 : -1});
-         this.totalThisWeekTasks = this.tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.completed ? 1 : -1});
+         console.log(this.tasks);
+         this.totalTomorrowTasks = this.tasks.filter(x => x.column == Columns.Tomorrow);
+         this.totalTodayTasks = this.tasks.filter(x => x.column == Columns.Today).sort(a => {return a.createdDate ? -1 : 1});
+         this.totalThisWeekTasks = this.tasks.filter(x => x.column == Columns.ThisWeek).sort(a => {return a.createdDate ? -1 : 1});
          if (!this.showCompleted) {
             this.tomorrowTasks = this.totalTomorrowTasks.filter(x => !x.completed);
             this.todayTasks = this.totalTodayTasks.filter(x => !x.completed);
@@ -141,6 +171,9 @@ export class AppComponent implements AfterViewInit {
             this.todayTasks = this.totalTodayTasks;
             this.thisWeekTasks = this.totalThisWeekTasks;
          }
+         this.tomorrowTasks = this.tomorrowTasks.sort(a => {return a.createdDate ? -1 : 1});
+         this.todayTasks = this.todayTasks.sort(a => {return a.createdDate ? -1 : 1});
+         this.thisWeekTasks = this.thisWeekTasks.sort(a => {return a.createdDate ? -1 : 1});
       });
    }
 
@@ -352,19 +385,19 @@ export class AppComponent implements AfterViewInit {
    }
 
    completeTask(task: Task, evt: any, mobile: boolean) {
+      task.completed = true;
       if (mobile) {
          evt.target.parentNode.className += ' fox-green';
       } else {
          evt.target.parentNode.parentNode.className += ' fox-green';
+         this.updateTask(task);
       }
-      task.completed = true;
-      this.updateTask(task);
    }
 
    clickDelete(task: Task, evt: any) {
       task.bgColor = '#b9300e';
       task.color = 'white';
-      evt.target.parentNode.previousSibling.style.display = 'none';
+      // evt.target.parentNode.previousSibling.style.display = 'none';
       evt.target.parentNode.parentNode.classList += ' hidden';
       this.timeout(1500).then(() => {
          this.deleteTask(task);
@@ -442,7 +475,20 @@ export class AppComponent implements AfterViewInit {
       console.log("pressHold event fired!");
    }
 
+   async flashItem(item: HTMLInputElement) {
+      item.className = 'w3-input w3-border w3-margin-bottom';
+      setTimeout(function() {
+         item.className += ' fox-flash-red';
+      }, 1);
+      await this.delay(2000);
+      this.errorMessages = [];
+   }
+
    // installPwa(): void {
    //    Pwa.promptEvent.prompt();
    // }
+
+   async delay(ms: number) {
+      return new Promise( resolve => setTimeout(resolve, ms) );
+  }
 }

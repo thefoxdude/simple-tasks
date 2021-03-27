@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { AuthenticationService } from './services/AuthenticationService.service';
 import { DatabaseService } from './services/DatabaseService.service';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { MultilineDotdotdotModule } from 'multiline-dotdotdot';
+
 
 @NgModule({
    declarations: [
@@ -22,7 +24,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       AngularFirestoreModule,
       FormsModule,
       AngularFireAuthModule,
-      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+      ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+      MultilineDotdotdotModule
    ],
    providers: [
       AuthenticationService,
