@@ -46,11 +46,11 @@
          </div>
       </div>
       <div class="fox-task-column">
-         <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
-            <div class="w3-container w3-col fox-check-container w3-display-container" style="width: 50px;">
-               <i aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
+         <div class="w3-card w3-hover-shadow task-card w3-row" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
+            <div class="w3-container w3-col fox-check-container w3-display-container">
+               <i class="fa fa-check w3-left fox-check" aria-hidden="true" (click)="uncompleteTask(task, $event.target)"></i>
             </div>
-            <div class="w3-container draggable-card w3-rest" (click)="selectTask(task.id)">
+            <div class="w3-container draggable-card w3-col w3-rest" (click)="selectTask(task.id)">
                <h4 class="fox-card-text" (touchstart)="handleTouchStart($event, task)" (touchmove)="handleTouchMove($event, task)" (touchend)="handleTouchEnd($event, task)">
                   {{ task.taskName }}
                </h4>

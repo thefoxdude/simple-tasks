@@ -83,7 +83,7 @@
    position: relative;
    height: 45px;
    text-overflow: ellipsis;
-   width: 90%;
+   /* width: 90%; */
 }
 
 .fox-check {
