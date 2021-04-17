@@ -27,12 +27,23 @@
    }
 
    .fox-check-container {
+      /* display: none; */
+      width: 50px;
+   }
+
+   .fox-check-container i {
       display: none;
    }
 
    .fox-delete {
       top: 10px;
       right: 5px;
+   }
+
+   .draggable-card {
+      width: calc(100% - 50px);
+      position: relative;
+      left: -50px;
    }
 }
 
