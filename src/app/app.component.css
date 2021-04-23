@@ -72,6 +72,7 @@
    color: black;
    width: 100%;
    overflow: hidden;
+   border-radius: 5px;
 }
 
 .fox-card-text {
@@ -92,14 +93,16 @@
 
 .draggable-card {
    position: relative;
-   height: 45px;
+   height: 50px;
    text-overflow: ellipsis;
+   padding-left: 8px;
+   padding-right: 8px;
    /* width: 90%; */
 }
 
 .fox-check {
    font-size: 2em;
-   border-radius: 50%;
+   border-radius: 5px;
    background-color: #39998E;
    color: white;
    position: relative;
@@ -108,7 +111,7 @@
 
 .fox-delete {
    font-size: 2em;
-   border-radius: 50%;
+   border-radius: 5px;
    color: #b9300e;
    position: relative;
    top: 10px;
@@ -228,4 +231,13 @@
 .new-button {
    position: relative;
    z-index: 2;
+}
+
+.fox-header {
+   margin-top: 8px;
+   margin: auto;
+   width: 350px;
+   background-color: #2B4D59;
+   color: white;
+   border-radius: 5px;
 }
