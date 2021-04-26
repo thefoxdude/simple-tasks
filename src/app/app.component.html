@@ -113,11 +113,13 @@
       </div>
       <div class="w3-display-container">
          <div class="w3-left">
-            <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()">
+            <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()" style="z-index: 2;">
             <label> Show Completed</label>
          </div>
          <div class="w3-right">
-            <button class="w3-button fox-green new-button" (click)="openModal('taskModal', 'Today')">NewTask</button>
+            <i class="fa fa-question-circle" (click)="showHelp()"></i>
+            <span class="help-content">Click here for new task</span>
+            <button class="w3-button fox-green new-button" (click)="openModal('taskModal', 'Today')">New Task</button>
          </div>
       </div>
       <div class="w3-center fox-welcome">
@@ -223,4 +225,8 @@
          <button (click)="updateTask(currentTask)" *ngIf="currentTask.id != null" class="w3-button fox-green w3-right w3-margin-top">Update</button>
       </form>
    </div>
+</div>
+
+<div class="w3-modal" id="helpModal" (click)="closeModal('helpModal')">
+   
 </div>

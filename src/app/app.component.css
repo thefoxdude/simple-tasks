@@ -117,6 +117,24 @@
    top: 10px;
 }
 
+.fa-question-circle {
+   font-size: 2em;
+   margin-right: 10px;
+   position: relative;
+   top: 8px;
+   z-index: 2;
+}
+
+.fa-question-circle:hover {
+   cursor: pointer;
+   
+}
+
+.help-content {
+   display: block;
+   z-index: 6;
+}
+
 @media only screen and (min-width: 900px) {
    .fox-check-container, .fox-delete-container {
       width: 20px;
@@ -133,6 +151,10 @@
 
    .fox-delete {
       top: 8px;
+   }
+
+   .fox-delete-container {
+      right: 15px;
    }
 }
 

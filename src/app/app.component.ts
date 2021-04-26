@@ -258,11 +258,7 @@ export class AppComponent implements AfterViewInit {
 
    async updateTask(task: Task) {
       console.log('updated');
-      if (this.originalTask && this.originalTask.column != task.column) {
-         task.updatedDate = new Date();
-      } else {
-         task.updatedDate = task.createdDate;
-      }
+      task.updatedDate = new Date();
       this.db.collection('tasks').doc(task.id).set({
          taskName: task.taskName,
          details: task.details,
@@ -490,5 +486,10 @@ export class AppComponent implements AfterViewInit {
 
    async delay(ms: number) {
       return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+
+  showHelp() {
+     console.log("here");
+     this.openModal('helpModal', '');
   }
 }
