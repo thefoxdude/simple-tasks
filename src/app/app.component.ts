@@ -6,6 +6,7 @@ import { AuthenticationService } from './services/AuthenticationService.service'
 import * as clone from 'clone';
 import { DatabaseService } from './services/DatabaseService.service';
 import { PwaService } from './services/PwaService';
+import { element } from 'protractor';
 
 
 
@@ -491,5 +492,13 @@ export class AppComponent implements AfterViewInit {
   showHelp() {
      console.log("here");
      this.openModal('helpModal', '');
+     let helpContent = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content");
+     let helpContent2 = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content2");
+     for (let i = 0; i < helpContent.length; i++) {
+         helpContent[i].style.display = 'block';
+         if (i < helpContent2.length) {
+            helpContent2[i].style.display = 'block';
+         }
+     }
   }
 }

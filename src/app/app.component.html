@@ -116,9 +116,11 @@
             <input class="w3-check" type="checkbox" [(ngModel)]="showCompleted" (click)="changeShow()" style="z-index: 2;">
             <label> Show Completed</label>
          </div>
-         <div class="w3-right">
+         <div class="w3-right help-container">
             <i class="fa fa-question-circle" (click)="showHelp()"></i>
-            <span class="help-content">Click here for new task</span>
+            <div class="help-content">
+               <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+            </div>
             <button class="w3-button fox-green new-button" (click)="openModal('taskModal', 'Today')">New Task</button>
          </div>
       </div>
@@ -132,6 +134,34 @@
             <h1>Today</h1>
          </div>
          <div class="fox-task-container">
+            <div class="w3-card task-card help-content2">
+               <div class="w3-display-container w3-container w3-rest">
+                  <div class="help-container">
+                     <div class="help-content">
+                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+                     </div>
+                     <div class="w3-col fox-check-container">
+                        <i class="fa fa-check w3-left fox-check"></i>
+                     </div>
+                  </div>
+                  <div class="help-container">
+                     <div class="help-content">
+                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+                     </div>
+                     <h4 class="fox-card-text" style="margin-left: 40px;">
+                        This is a task
+                     </h4>
+                  </div>
+                  <div class="help-container">
+                     <div class="help-content">
+                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+                     </div>
+                     <div class="w3-display-topright w3-col fox-delete-container">
+                        <i class="fa fa-times-circle w3-left fox-delete"></i>
+                     </div>
+                  </div>
+               </div>
+            </div>
             <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
                <div class="w3-display-container w3-container draggable-card w3-rest">
                   <div class="w3-display-hover w3-col fox-check-container">

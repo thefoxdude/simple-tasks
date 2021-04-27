@@ -130,9 +130,23 @@
    
 }
 
+.help-container {
+   position: relative;
+   float: left;
+}
+
 .help-content {
-   display: block;
+   display: none;
    z-index: 6;
+   position: absolute;
+   color: white;
+   top: -40px;
+}
+
+.help-content2 {
+   display: none;
+   z-index: 6;
+   position: relative;
 }
 
 @media only screen and (min-width: 900px) {
