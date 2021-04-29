@@ -130,38 +130,36 @@
    </div>
    <div class="w3-row w3-padding-top-32">
       <section class="today w3-container w3-col m4">
-         <div class="w3-center w3-display-container w3-margin-bottom">
-            <h1>Today</h1>
+         <div style="position: relative; margin: auto; width:fit-content;">
+            <div class="help-content" style="width: 175px; left: -25px">
+               <span>Yellow = 1 day old<br />Red = 2 days old &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+            </div>
+            <div class="w3-center w3-display-container w3-margin-bottom fox-column-header">
+               <h1>Today</h1>
+            </div>
          </div>
-         <div class="fox-task-container">
-            <div class="w3-card task-card help-content2">
-               <div class="w3-display-container w3-container w3-rest">
-                  <div class="help-container">
-                     <div class="help-content">
-                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
-                     </div>
-                     <div class="w3-col fox-check-container">
-                        <i class="fa fa-check w3-left fox-check"></i>
-                     </div>
+         
+         <div >
+            <div class="w3-card w3-hover-shadow task-card help-content2">
+               <div class="w3-display-container w3-container draggable-card">
+                  <div class="help-content">
+                     <span><i class="fa fa-share fa-rotate-90"></i> Complete task</span>
                   </div>
-                  <div class="help-container">
-                     <div class="help-content">
-                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
-                     </div>
-                     <h4 class="fox-card-text" style="margin-left: 40px;">
-                        This is a task
-                     </h4>
+                  <div class="w3-col fox-check-container">
+                     <i aria-hidden="true" class="fa fa-check w3-left fox-check"></i>
                   </div>
-                  <div class="help-container">
-                     <div class="help-content">
-                        <span>Create Task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
-                     </div>
-                     <div class="w3-display-topright w3-col fox-delete-container">
-                        <i class="fa fa-times-circle w3-left fox-delete"></i>
-                     </div>
+                  
+                  <h4 class="fox-card-text" style="margin-left: 35px;">This is a task</h4>
+                  <div class="help-content" style="right: 10px;">
+                     <span>Delete task &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+                  </div>
+                  <div class="w3-display-topright w3-col fox-delete-container">
+                     <i aria-hidden="true" class="fa fa-times-circle w3-left fox-delete"></i>
                   </div>
                </div>
             </div>
+         </div>
+         <div class="fox-task-container">
             <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of todayTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
                <div class="w3-display-container w3-container draggable-card w3-rest">
                   <div class="w3-display-hover w3-col fox-check-container">
@@ -183,8 +181,13 @@
          </div>
       </section>
       <section class="tomorrow w3-container w3-col m4">
-         <div class="w3-center w3-display-container w3-margin-bottom">
-            <h1>Tomorrow</h1>
+         <div style="position: relative; margin: auto; width:fit-content;">
+            <div class="help-content" style="width: 175px;">
+               <span>Become 'Today' after 24 hrs &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+            </div>
+            <div class="w3-center w3-display-container w3-margin-bottom fox-column-header">
+               <h1>Tomorrow</h1>
+            </div>
          </div>
          <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of tomorrowTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
             
@@ -202,8 +205,13 @@
          </div>
       </section>
       <section class="thisWeek w3-container w3-col m4">
-         <div class="w3-center w3-display-container w3-margin-bottom">
-            <h1>This Week</h1>
+         <div style="position: relative; margin: auto; width:fit-content;">
+            <div class="help-content" style="width: 175px; left: 10px">
+               <span>Yellow = 3 day old<br />Red = 5 days old &nbsp;<i class="fa fa-share fa-rotate-90"></i></span>
+            </div>
+            <div class="w3-center w3-display-container w3-margin-bottom fox-column-header">
+               <h1>This Week</h1>
+            </div>
          </div>
          <div class="w3-card w3-hover-shadow task-card" *ngFor="let task of thisWeekTasks" [style.background-color]="task.bgColor" [style.color]="task.color">
             

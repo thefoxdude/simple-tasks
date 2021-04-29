@@ -289,6 +289,7 @@ export class AppComponent implements AfterViewInit {
    closeModal(modalName: string) {
       this.currentTask = new Task();
       (<HTMLElement> document.getElementById(modalName)).style.display = 'none';
+      this.hideHelp();
    }
 
    getTouches(evt) {
@@ -489,16 +490,36 @@ export class AppComponent implements AfterViewInit {
       return new Promise( resolve => setTimeout(resolve, ms) );
   }
 
-  showHelp() {
-     console.log("here");
-     this.openModal('helpModal', '');
-     let helpContent = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content");
-     let helpContent2 = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content2");
-     for (let i = 0; i < helpContent.length; i++) {
+   showHelp() {
+      console.log("here");
+      this.openModal('helpModal', '');
+      let helpContent = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content");
+      let helpContent2 = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content2");
+      let headers = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("fox-column-header");
+      for (let i = 0; i < helpContent.length; i++) {
          helpContent[i].style.display = 'block';
          if (i < helpContent2.length) {
             helpContent2[i].style.display = 'block';
          }
-     }
-  }
+         if (i < headers.length) {
+            headers[i].style.zIndex = '6';
+         }
+      }
+   }
+
+   hideHelp() {
+      console.log("here");
+      let helpContent = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content");
+      let helpContent2 = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("help-content2");
+      let headers = <HTMLCollectionOf<HTMLElement>> document.getElementsByClassName("fox-column-header");
+      for (let i = 0; i < helpContent.length; i++) {
+         helpContent[i].style.display = 'none';
+         if (i < helpContent2.length) {
+            helpContent2[i].style.display = 'none';
+         }
+         if (i < headers.length) {
+            headers[i].style.zIndex = '1';
+         }
+      }
+   }
 }

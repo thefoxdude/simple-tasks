@@ -147,6 +147,11 @@
    display: none;
    z-index: 6;
    position: relative;
+   overflow: visible;
+}
+
+.help-content2:hover {
+   cursor: default;
 }
 
 @media only screen and (min-width: 900px) {
