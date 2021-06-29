@@ -66,7 +66,7 @@ export class AppComponent implements AfterViewInit {
       } else {
          this.userId = null;
       }
-      this.buildNo = 6;
+      this.buildNo = 7;
       this.errorMessages = [];
    }
 
@@ -173,7 +173,7 @@ export class AppComponent implements AfterViewInit {
             this.thisWeekTasks = this.totalThisWeekTasks;
          }
          this.tomorrowTasks = this.tomorrowTasks.sort(a => {return a.createdDate ? -1 : 1});
-         this.todayTasks = this.todayTasks.sort(a => {return a.createdDate ? -1 : 1});
+         this.todayTasks = this.todayTasks.sort((a, b) => {return b.createdDate.seconds - a.createdDate.seconds});
          this.thisWeekTasks = this.thisWeekTasks.sort(a => {return a.createdDate ? -1 : 1});
       });
    }
@@ -318,10 +318,11 @@ export class AppComponent implements AfterViewInit {
          if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
             if ( xDiff < 0) {
                /* right swipe */
-               evt.target.parentNode.style.right = xDiff + 'px';
+               evt.target.parentNode.style.left = ((-1 * xDiff) - 50) + 'px';
                if (xDiff < -50) {
-                  if (!task.completed && !evt.target.parentNode.previousSibling.firstChild.classList.contains('fox-check') && !this.touchStartCompleted) {
-                     evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-check w3-left fox-check';
+                  if (!task.completed && !this.touchStartCompleted) {
+                    //  evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-check w3-left fox-check';
+                     evt.target.parentNode.previousSibling.firstChild.style.display = 'block';
                   } else if (task.completed && !evt.target.parentNode.previousSibling.firstChild.classList.contains('fox-delete') && this.touchStartCompleted) {
                      evt.target.parentNode.previousSibling.firstChild.classList = 'fa fa-times-circle w3-left fox-delete';
                   }
@@ -347,9 +348,9 @@ export class AppComponent implements AfterViewInit {
    handleTouchEnd(evt: any, task: Task) {
       if (task.id != null) {
          console.log("ended");
-         evt.target.parentNode.style.right = '0px';
+         evt.target.parentNode.style.left = '-50px';
          if (!task.completed) {
-            evt.target.parentNode.previousSibling.style.display = 'none';
+            evt.target.parentNode.previousSibling.firstChild.style.display = 'none';
          } else if (task.completed && !this.touchStartCompleted) {
             task.bgColor = '#39998E';
             task.color = 'white';
@@ -357,7 +358,7 @@ export class AppComponent implements AfterViewInit {
          } else if (task.completed && this.touchStartCompleted && task.toDelete) {
             task.bgColor = '#b9300e';
             task.color = 'white';
-            evt.target.parentNode.previousSibling.style.display = 'none';
+            evt.target.parentNode.previousSibling.firstChild.style.display = 'none';
             evt.target.parentNode.parentNode.classList += ' hidden';
             this.timeout(1500).then(() => {
                this.deleteTask(task);
