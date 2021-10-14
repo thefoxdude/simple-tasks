@@ -1,6 +1,6 @@
 # SimpleTask
 
-This project is a simple approach to a task app with only three columns, Today, Tomorrow, and This Week. Based on the day the task was added, it will move automatically from Tomorrow to Today and will also turn colors based on how long it has been untouched. The live version of the application can be found here: `https://fox-simple-task.web.app/`. Please, feel free to sign up and use it.
+This project is a simple approach to a task app with only three columns, Today, Tomorrow, and This Week. Based on the day the task was added, it will move automatically from Tomorrow to Today and will also turn colors based on how long it has been untouched. The live version of the application can be found here: [Simple Tasks](https://fox-simple-task.web.app/). Please, feel free to sign up and use it.
 
 ## Technical Description
 
@@ -16,4 +16,4 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Help
 
-To know more about Angular, check out their in-house tutorial `https://angular.io/docs` which covers most surface level needs. For Firebase, they also have great documentation `https://firebase.google.com/docs` but they do not have comprehensive instructions for Angular. Here is one great tutorial on setting up Firebase hosting for Angular `https://www.positronx.io/deploy-angular-app-to-production-with-firebase-hosting/`.
+To know more about Angular, check out their in-house tutorial [Angular Tutorial](https://angular.io/docs) which covers most surface level needs. For Firebase, they also have great documentation [Firebase Tutorial](https://firebase.google.com/docs) but they do not have comprehensive instructions for Angular. Here is one great tutorial on setting up Firebase hosting for Angular [Hosting Tutorial](https://www.positronx.io/deploy-angular-app-to-production-with-firebase-hosting/).
