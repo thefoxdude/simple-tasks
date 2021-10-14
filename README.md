@@ -1,27 +1,19 @@
 # SimpleTask
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.2.
+This project is a simple approach to a task app with only three columns, Today, Tomorrow, and This Week. Based on the day the task was added, it will move automatically from Tomorrow to Today and will also turn colors based on how long it has been untouched.
+
+## Technical Description
+
+Simple Tasks is designed to work on both desktop and mobile. The database and hosting are through Firebase. The project is written using Angular 11. Simple Tasks does use PWA technologies having a manifest and a default service worker to make it downloadable as a stand-alone app, but it does not fully work offline yet.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+To run Simple Tasks, clone the project, run `npm install`, and finally run `ng serve`. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
+## Help
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To know more about Angular, check out their in-house tutorial `https://angular.io/docs` which covers most surface level needs. For Firebase, they also have great documentation `https://firebase.google.com/docs` but they do not have comprehensive instructions for Angular. Here is one great tutorial on setting up Firebase hosting for Angular `https://www.positronx.io/deploy-angular-app-to-production-with-firebase-hosting/`.
