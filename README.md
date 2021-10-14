@@ -1,6 +1,6 @@
 # SimpleTask
 
-This project is a simple approach to a task app with only three columns, Today, Tomorrow, and This Week. Based on the day the task was added, it will move automatically from Tomorrow to Today and will also turn colors based on how long it has been untouched.
+This project is a simple approach to a task app with only three columns, Today, Tomorrow, and This Week. Based on the day the task was added, it will move automatically from Tomorrow to Today and will also turn colors based on how long it has been untouched. The live version of the application can be found here: `https://fox-simple-task.web.app/`. Please, feel free to sign up and use it.
 
 ## Technical Description
 
